@@ -7,8 +7,8 @@ library(grid)
 library(stringr)
 library(dplyr)
 
-dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/inbo-changedetection/data/Sen2_data/begin May")
-dirs <- dirs[ grepl("BE", dirs)]
+dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/begin May")
+dirs <- dirs[ grepl("BE2500001-25", dirs)]
 
 for (n in dirs){
   file_miica <- list.files(n, "miica_ind.Rdata$", full.names = TRUE, recursive = TRUE)
@@ -38,13 +38,13 @@ for (n in dirs){
       name_ind <- names(miica_only_noNA)[l]
       ind_outliers <- miica_only_noNA %>% filter(.[[5+l]] > 2 | .[[5+l]] < -2)
       rast_outliers <- stack_miica[[1]]
-      rast_outliers <- reclassify(rast_outliers, cbind(-Inf, 10, 0), right=FALSE)
+      rast_outliers <- reclassify(rast_outliers, cbind(-Inf, 10, NA), right=FALSE)
       for (o in 1:dim(ind_outliers)[1]){
         pix <- as.integer(ind_outliers$pix_nr[o])
         print(pix)
         values(rast_outliers)[pix] <- ind_outliers[o, 5+l]
       }
-      name_ras <- paste0("Q:/Projects/PRJ_RemSen/Change detection 2018/inbo-changedetection/data/Sen2_data/begin May/", name_studysite, "/outliers_noPlanet_", to_year, "_", name_ind, "_", name_studysite)
+      name_ras <- paste0("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/begin May/", name_studysite, "/outliers_noPlanet_", to_year, "_", name_ind, "_", name_studysite)
       writeRaster(rast_outliers, name_ras, format = "GTiff", overwrite=TRUE)
     }
   }

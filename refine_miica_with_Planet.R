@@ -8,7 +8,7 @@ library(stringr)
 library(dplyr)
 
 dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/inbo-changedetection/data/Sen2_data/begin May")
-dirs <- dirs[ grepl("", dirs)]
+dirs <- dirs[ grepl("BE", dirs)]
 
 for (n in dirs){
   file_miica <- list.files(n, "miica_ind.Rdata$", full.names = TRUE, recursive = TRUE)
@@ -80,7 +80,7 @@ for (n in dirs){
         print(pix)
         values(rast_outliers)[pix] <- ind_outliers[o, 6+l]
       }
-      name_ras <- paste0("Q:/Projects/PRJ_RemSen/Change detection 2018/inbo-changedetection/data/Sen2_data/begin May/", name_studysite, "/outliers_", to_year, "_", name_ind, "_", name_studysite)
+      name_ras <- paste0("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/begin May/", name_studysite, "/outliers_", to_year, "_", name_ind, "_", name_studysite)
       writeRaster(rast_outliers, name_ras, format = "GTiff", overwrite=TRUE)
     }
   }

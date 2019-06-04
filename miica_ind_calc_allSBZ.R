@@ -8,7 +8,7 @@ library(stringr)
 
 
 # Get dirs in the Sen2_data folder where the layer stacks have been written by the stack_Sen2_allSBZ file
-head_dir <- "Q:/Projects/PRJ_RemSen/Change detection 2018/inbo-changedetection/data/Sen2_data/"
+head_dir <- "Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/"
 sub_dir <- "begin May"
 total_dir <- paste0(head_dir, sub_dir)
 dirs <- list.dirs(total_dir)

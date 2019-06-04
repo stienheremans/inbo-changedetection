@@ -5,7 +5,7 @@ library(stringr)
 library(RStoolbox)
   
 # Get shapefile of SBZs in UTM31N
-file_SBZ <- "../inbo-downloadsubimages_python/inputs/shp_allSBZ/SBZ-Hdeel_UES_UFS_UTM31N.shp"
+file_SBZ <- "../inbo-downloadsubimages_python/inputs/shp_allSBZ/SBZ-Hdeel_diss_UES_UFS_UTM31N.shp"
 shp_SBZ <- readOGR(file_SBZ)
 
 # Get directories of EUS and EFS to calculate overlap with SBZ subarea later
@@ -13,13 +13,13 @@ dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/Sentinel 2 image
 dirs_UES <- dirs[ grepl("UES", dirs)]
 dirs_UFS <- dirs[ grepl("UFS", dirs)]
 
-head_dir <- "Q:/Projects/PRJ_RemSen/Change detection 2018/inbo-changedetection/data/Sen2_data/"
+head_dir <- "Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/"
 sub_dir <- "begin May/"
 total_dir <- paste0(head_dir, sub_dir)
 
 #Loop over SBZs
 
-for (n in 1:20){
+for (n in 1:length(shp_SBZ)){
   # Keep name and code of SBZ (subarea)
   studysite <- shp_SBZ[n,]
   SBZ_code = shp_SBZ[n,]$DEELGEBIED
@@ -187,5 +187,6 @@ for (n in 1:20){
   final_list <- list(list_10m, list_20m)
   names(final_list) <- c("10m_stack", "20m_stack")
   save(final_list, file = paste0(total_dir, SBZ_code, "/", SBZ_code, "_stacks.Rdata"))
+  print(paste0("SBZ ", n, " of ", length(shp_SBZ), " done"))
 }
 

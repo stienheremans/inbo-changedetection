@@ -6,9 +6,12 @@ library(gridExtra)
 library(grid)
 library(stringr)
 library(dplyr)
+library(leaflet)
+library(htmlwidgets)
+library(htmltools)
 
 dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/begin May")
-dirs <- dirs[ grepl("BE2500001-25", dirs)]
+dirs <- dirs[ grepl("BE", dirs)]
 
 for (n in dirs){
   file_miica <- list.files(n, "miica_ind.Rdata$", full.names = TRUE, recursive = TRUE)
@@ -16,6 +19,7 @@ for (n in dirs){
   start_loc <- str_locate(n, "BE")[1]
   end_loc <- nchar(n)
   name_studysite <- str_sub(n,start_loc ,end_loc)
+  print(paste0("Starting studysite ", name_studysite))
   
   
   # Stack miica rasters (per year combination)
@@ -41,12 +45,13 @@ for (n in dirs){
       rast_outliers <- reclassify(rast_outliers, cbind(-Inf, 10, NA), right=FALSE)
       for (o in 1:dim(ind_outliers)[1]){
         pix <- as.integer(ind_outliers$pix_nr[o])
-        print(pix)
+        
         values(rast_outliers)[pix] <- ind_outliers[o, 5+l]
       }
       name_ras <- paste0("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/begin May/", name_studysite, "/outliers_noPlanet_", to_year, "_", name_ind, "_", name_studysite)
       writeRaster(rast_outliers, name_ras, format = "GTiff", overwrite=TRUE)
     }
   }
+  print(paste0("Ended studysite ", name_studysite))
 }
 

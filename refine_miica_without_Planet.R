@@ -1,3 +1,5 @@
+# In this file, z scores are calculated for the four MIICA indicators and a threshold is used to keep only the pixels with the highest or lowest z scores. 
+
 library(ggplot2)
 library(raster)
 library(RStoolbox)

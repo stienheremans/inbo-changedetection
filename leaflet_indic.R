@@ -1,4 +1,4 @@
-# Make leaflet illustration of many rasters
+# Make leaflet illustration of indicator rasters
 library(leaflet)
 library(htmlwidgets)
 library(htmltools)
@@ -12,7 +12,6 @@ for (n in dirs){
   # import all necessary files (4 miica indicators for each year, outliers for each indicator without Planet for each year)
   files <- list.files(n, full.names = T)
   files_indicators <- files[grepl("to.*tif$", files)]
-  files_outliers <- files[grepl("outliers_no.*tif$", files)]
   
   # fixed map layout
   tag.map.title <- tags$style(HTML("

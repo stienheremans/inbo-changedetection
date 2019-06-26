@@ -9,12 +9,12 @@ file_SBZ <- "../inbo-downloadsubimages_python/inputs/shp_allSBZ/SBZ-Hdeel_diss_U
 shp_SBZ <- readOGR(file_SBZ)
 
 # Get directories of EUS and EFS to calculate overlap with SBZ subarea later
-dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/Sentinel 2 images/begin May/")
+dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/Sentinel 2 images/end May/")
 dirs_UES <- dirs[ grepl("UES", dirs)]
 dirs_UFS <- dirs[ grepl("UFS", dirs)]
 
 head_dir <- "Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/"
-sub_dir <- "begin May/"
+sub_dir <- "end May/"
 total_dir <- paste0(head_dir, sub_dir)
 
 #Loop over SBZs
@@ -50,7 +50,7 @@ for (n in 1:length(shp_SBZ)){
     dir.create(file.path(total_dir, SBZ_code))
   }
   
-  dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/Sentinel 2 images/begin May/")
+  dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/Sentinel 2 images/end May/")
   if (Sen2_tile == "UES"){
     dirs <- dirs[ grepl("UES", dirs)]
   } else {

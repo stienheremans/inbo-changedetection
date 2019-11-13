@@ -1,4 +1,4 @@
-# In this file, a leaflet is created with the outliers for each MIICA indicator, the sum of the absolute values, the number indicators with outlier values and the type of indicators with outliers. Extra panes are created with the orthophotos for each year
+# In this file, a leaflet is created with the outliers for each MIICA indicator, the sum of the absolute values, the number indicators with outlier values and the type of indicators with outliers. Extra panes are created with the Sentinel 2 images for each time point used in the analysis
 
 
 library(leaflet)
@@ -11,6 +11,7 @@ library(leafsync)
 library(magrittr)
 library(devtools)
 library(dplyr)
+library(mapview)
 
 dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/begin May")
 dirs <- dirs[ grepl("BE", dirs)]
@@ -91,17 +92,17 @@ for (n in dirs[1:length(dirs)]){
       ind_outl <- c(ind_outl, paste0(ind, year))
       if (!is.infinite(rast_WGS84@data@min) &  !is.infinite(rast_WGS84@data@max)){
         pal <- colorNumeric(c("royalblue", "yellow", "red"), values(rast_WGS84),
-                           na.color = "transparent")
+                            na.color = "transparent")
         
         map <- map %>%
           addRasterImage(rast_WGS84, colors = pal, opacity = 1, group = paste0(ind, year)) %>%
           addLegend("bottomleft", pal = pal, values = values(rast_WGS84),
                     title = paste0(ind, " ", year),
                     opacity = 0.8, group =  paste0(ind, year))
-        }
+      }
       
       bin = bin + 1
-      }
+    }
     
     rast_numb <- reclassify(rast_numb, cbind(-1, 0, NA), right = TRUE)
     rast_sum <- reclassify(rast_sum, cbind(-1, 0, NA), right = TRUE)
@@ -172,35 +173,71 @@ for (n in dirs[1:length(dirs)]){
       options = layersControlOptions(collapsed = FALSE), position = "bottomright") %>%
     hideGroup(groups_hide)
   
-  map1 <- leaflet() %>% 
-    addTiles() %>%
-    addWMSTiles(
-      "https://geoservices.informatievlaanderen.be/raadpleegdiensten/OMW/wms?",
-      layers = "OMWRGB16VL",
-      options = WMSTileOptions(format = "image/png", transparent = F)
-    )
+  #add Sentinel RGB maps
   
-  map2 <- leaflet() %>% 
-    addTiles() %>%
-    addWMSTiles(
-      "https://geoservices.informatievlaanderen.be/raadpleegdiensten/OMW/wms?",
-      layers = "OMWRGB17VL",
-      options = WMSTileOptions(format = "image/png", transparent = F)
-    )
-  map3 <- leaflet() %>% 
-    addTiles() %>%
-    addWMSTiles(
-      "https://geoservices.informatievlaanderen.be/raadpleegdiensten/OMW/wms?",
-      layers = "OMWRGB18VL",
-      options = WMSTileOptions(format = "image/png", transparent = F)
-    )
+  map_base <- leaflet() %>%
+    addProviderTiles('Esri.WorldImagery', group = "basemap")
   
+  map_base <- map_base %>%
+    addLayersControl(
+      baseGroups = c("basemap"))
+  
+  files_2018 <- list.files(n)
+  files_2018 <- files_2018[ grepl("2018", files_2018)]
+  if (length(files_2018) > 0){
+    files_2018 <- files_2018[ grepl("10M", files_2018)]
+    file_2018_blue <- files_2018[ grepl("B02", files_2018)]
+    file_2018_green <- files_2018[ grepl("B03", files_2018)]
+    file_2018_red <- files_2018[ grepl("B04", files_2018)]
+    
+    sen2018_blue <- raster(paste0(n, "/",file_2018_blue))
+    sen2018_green <- raster(paste0(n, "/",file_2018_green))
+    sen2018_red <- raster(paste0(n, "/",file_2018_red))
+    img_2018 <- brick(sen2018_red, sen2018_green, sen2018_blue)
+    map1 <- viewRGB(img_2018, map = map_base)
+  } else {
+    map1 <- map_base
+  }
+  
+  files_2017 <- list.files(n)
+  files_2017 <- files_2017[ grepl("2017", files_2017)]
+  if (length(files_2017) > 0){
+    files_2017 <- files_2017[ grepl("10M", files_2017)]
+    file_2017_blue <- files_2017[ grepl("B02", files_2017)]
+    file_2017_green <- files_2017[ grepl("B03", files_2017)]
+    file_2017_red <- files_2017[ grepl("B04", files_2017)]
+    
+    sen2017_blue <- raster(paste0(n, "/",file_2017_blue))
+    sen2017_green <- raster(paste0(n, "/",file_2017_green))
+    sen2017_red <- raster(paste0(n, "/",file_2017_red))
+    img_2017 <- brick(sen2017_red, sen2017_green, sen2017_blue)
+    map2 <- viewRGB(img_2017, map = map_base)
+  } else {
+    map2 <- map_base
+  }
+  
+  files_2016 <- list.files(n)
+  files_2016 <- files_2016[ grepl("2016", files_2016)]
+  if (length(files_2016) > 0){
+    files_2016 <- files_2016[ grepl("10M", files_2016)]
+    file_2016_blue <- files_2016[ grepl("B02", files_2016)]
+    file_2016_green <- files_2016[ grepl("B03", files_2016)]
+    file_2016_red <- files_2016[ grepl("B04", files_2016)]
+    
+    sen2016_blue <- raster(paste0(n, "/",file_2016_blue))
+    sen2016_green <- raster(paste0(n, "/",file_2016_green))
+    sen2016_red <- raster(paste0(n, "/",file_2016_red))
+    img_2016 <- brick(sen2016_red, sen2016_green, sen2016_blue)
+    map3 <- viewRGB(img_2016, map = map_base)
+  } else {
+    map3 <- map_base
+  }
   
   leafsync::latticeView(map, map1, map2, map3, ncol = 2, sync = list(c(2, 2)), sync.cursor = TRUE, no.initial.sync = FALSE)
   maps <- leafsync::sync(map, map1, map2, map3)
   
-  file_name <- paste0("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/leaflets/begin May/ouliers_", studysite, "_ortho.html")
-
+  file_name <- paste0("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/leaflets/begin May/outliers_", studysite, "_Sen2.html")
+  
   save_tags(maps, file_name, selfcontained=F)
   
 }

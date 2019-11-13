@@ -4,6 +4,7 @@ library(leaflet)
 library(htmlwidgets)
 library(htmltools)
 library(stringr)
+library(mapview)
 
 dirs <- list.dirs("Q:/Projects/PRJ_RemSen/Change detection 2018/change-detection files/data/Sen2_data/begin May")
 dirs <- dirs[ grepl("BE", dirs)]
@@ -57,6 +58,7 @@ for (n in dirs){
   }
   title_map <- tags$div(
     tag.map.title, HTML(paste0(studysite)))
+  
 
   map <- map%>%
     addLayersControl(

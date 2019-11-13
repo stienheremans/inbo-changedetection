@@ -1,4 +1,5 @@
 # Make leaflet illustration of indicator rasters
+library(raster)
 library(leaflet)
 library(htmlwidgets)
 library(htmltools)
